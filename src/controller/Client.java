@@ -47,6 +47,10 @@ public class Client implements Subject {
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.clientUser = clientUser;
+            bufferedWriter.write(clientUser);
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+
         } catch (IOException e) {
             closeConnection(this.socket, bufferedWriter, bufferedReader);
             e.printStackTrace();
@@ -56,10 +60,6 @@ public class Client implements Subject {
 
     public void sendData(Vote vote) {
         try {
-            bufferedWriter.write(clientUser);
-            bufferedWriter.newLine();
-            bufferedWriter.flush();
-
             while (socket.isConnected()) {
                 bufferedWriter.write(clientUser+";"+ vote.isParecer());
                 bufferedWriter.newLine();
