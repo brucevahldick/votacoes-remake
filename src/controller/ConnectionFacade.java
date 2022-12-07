@@ -1,15 +1,17 @@
 package controller;
 
 import model.Config;
+import model.Usuario;
 import model.Vote;
 import observer.Observer;
 import observer.Subject;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConnectionFacade implements Subject {
+public class ConnectionFacade implements Subject, Observer {
     private Client client;
     private Config config;
     private List<Observer> observers;
@@ -23,13 +25,11 @@ public class ConnectionFacade implements Subject {
         observers = new ArrayList<>();
     }
     public void connectWithConfig(String ip, String nome) throws IOException {
-        notifyObservers();
-//        try (Socket socket = new Socket(ip, 80)) {
-//            config = new Config(new Usuario(nome), ip);
-//            client = new Client(socket, nome);
-//            notifyObservers();
-//        }
-
+        try (Socket socket = new Socket(ip, 80)) {
+            config = new Config(new Usuario(nome), ip);
+            client = new Client(socket, nome);
+            notifyObservers();
+        }
     }
 
     public void votar(boolean voto)
@@ -60,5 +60,20 @@ public class ConnectionFacade implements Subject {
 
     public void removeObserver(Observer o) {
         observers.remove(o);
+    }
+
+    @Override
+    public void update() {
+        String message = client.getMessageServer();
+        String[] userVotes = message.split(";");
+        List<Vote> votos = new ArrayList<>();
+        for (String userVote : userVotes) {
+            String[] voto = userVote.split(":");
+            Vote vote = new Vote();
+            vote.setUsuario(new Usuario(voto[0]));
+            vote.setParecer(voto[1].equals("favor"));
+            votos.add(vote);
+        }
+        atualizarVotacao(votos);
     }
 }

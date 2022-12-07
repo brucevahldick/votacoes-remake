@@ -1,6 +1,8 @@
 package controller;
 
 import model.Vote;
+import observer.Observer;
+import observer.Subject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -8,10 +10,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-public class Client {
+public class Client implements Subject {
 
     Map<String, String> inputInfo;
 
@@ -19,6 +23,12 @@ public class Client {
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private String clientUser;
+
+    private String messageServer;
+
+    public String getMessageServer() {
+        return messageServer;
+    }
 
     public void conectar() throws IOException {
         Scanner scanner = new Scanner(System.in);
@@ -41,6 +51,7 @@ public class Client {
             closeConnection(this.socket, bufferedWriter, bufferedReader);
             e.printStackTrace();
         }
+        observerList = new ArrayList<>();
     }
 
     public void sendData(Vote vote) {
@@ -62,13 +73,10 @@ public class Client {
 
     public void listenForData() {
         new Thread(() -> {
-            String messageFromServer;
-
             while (socket.isConnected()) {
                 try {
-                    messageFromServer = bufferedReader.readLine();
-                    // show message from server
-                    System.out.println(messageFromServer);
+                    // FORMATO > nome:voto;nome:voto;nome:voto
+                    messageServer = bufferedReader.readLine();
                 } catch (IOException e) {
                     closeConnection(socket, bufferedWriter, bufferedReader);
                     e.printStackTrace();
@@ -87,5 +95,19 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private List<Observer> observerList;
+
+    @Override
+    public void notifyObservers() {
+        for (Observer o : observerList) {
+            o.update();
+        }
+    }
+
+    @Override
+    public void addObserver(Observer o) {
+        observerList.add(o);
     }
 }

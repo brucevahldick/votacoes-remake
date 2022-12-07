@@ -24,4 +24,9 @@ public class Vote {
     {
         return usuario.getNome() + ": " + (isParecer() ? "favor" : "contra");
     }
+
+    public String getVoteStructure()
+    {
+        return usuario.getNome() + ":" + (isParecer() ? "favor" : "contra");
+    }
 }

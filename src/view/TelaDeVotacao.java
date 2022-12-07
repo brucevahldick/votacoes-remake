@@ -12,11 +12,13 @@ import java.awt.*;
 public class TelaDeVotacao extends JFrame implements Observer {
     private ConnectionFacade connectionFacade;
 
+    private JTable jt_votos;
+
     class VotosModel extends AbstractTableModel {
 
         @Override
         public int getRowCount() {
-            return 0;
+            return connectionFacade.getVotos().size();
         }
 
         @Override
@@ -59,13 +61,27 @@ public class TelaDeVotacao extends JFrame implements Observer {
         jp_botoesVoto.add(jb_favor);
         jp_botoesVoto.add(jb_contra);
         add(jp_botoesVoto);
-        JPanel jp_votos;
+        JPanel jp_votos = new JPanel();
+        buildTable();
+        jp_votos.add(jt_votos);
+    }
+
+    private void buildTable()
+    {
+        jt_votos = new JTable();
+        jt_votos.setBackground(Color.black);
+        jt_votos.setModel(new VotosModel());
+        for (int i = 0; i < jt_votos.getColumnModel().getColumnCount(); i++) {
+            jt_votos.getColumnModel().getColumn(i).setWidth(35);
+            jt_votos.getColumnModel().getColumn(i).setMaxWidth(45);
+        }
+        jt_votos.setRowHeight(32);
+        jt_votos.setShowGrid(false);
+        jt_votos.setDefaultRenderer(Object.class, new VotoRender());
     }
 
     @Override
     public void update() {
-        for (Vote vote : connectionFacade.getVotos()) {
-
-        }
+        buildTable();
     }
 }
