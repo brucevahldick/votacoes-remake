@@ -77,6 +77,7 @@ public class Client implements Subject {
                 try {
                     // FORMATO > nome:voto;nome:voto;nome:voto
                     messageServer = bufferedReader.readLine();
+                    notifyObservers();
                 } catch (IOException e) {
                     closeConnection(socket, bufferedWriter, bufferedReader);
                     e.printStackTrace();
