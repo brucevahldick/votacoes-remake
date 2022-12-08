@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Server {
 
@@ -25,10 +26,15 @@ public class Server {
         System.out.println("Your current IP address : " + ip);
         System.out.println("Your current Hostname : " + hostname);
 
-        server.startServer();
+        Scanner s = new Scanner(System.in);
+        System.out.println("Escreva qual o tema a ser votado");
+        String tema = s.nextLine();
+
+
+        server.startServer(tema);
     }
 
-    public void startServer() {
+    public void startServer(String tema) {
         try {
             while (!serverSocket.isClosed()) {
                 // New server socket for the recently connection created.
@@ -36,7 +42,7 @@ public class Server {
                 System.out.println("New client has connected");
 
                 // Runnable object instance.
-                ClientHandler clientHandler = new ClientHandler(socket);
+                ClientHandler clientHandler = new ClientHandler(socket, tema);
 
                 Thread thread = new Thread(clientHandler);
                 thread.start();

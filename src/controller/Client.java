@@ -52,7 +52,7 @@ public class Client implements Subject {
             bufferedWriter.flush();
 
         } catch (IOException e) {
-            closeConnection(this.socket, bufferedWriter, bufferedReader);
+//            closeConnection(this.socket, bufferedWriter, bufferedReader);
             e.printStackTrace();
         }
         observerList = new ArrayList<>();
@@ -60,26 +60,27 @@ public class Client implements Subject {
 
     public void sendData(Vote vote) {
         try {
-            while (socket.isConnected()) {
+            while (socket.isConnected() && !socket.isClosed()) {
                 bufferedWriter.write(clientUser+";"+ vote.isParecer());
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
             }
         } catch (IOException e) {
-            closeConnection(socket, bufferedWriter, bufferedReader);
+//            closeConnection(socket, bufferedWriter, bufferedReader);
             e.printStackTrace();
         }
     }
 
     public void listenForData() {
         new Thread(() -> {
-            while (socket.isConnected()) {
+            while (socket.isConnected() && !socket.isClosed()) {
                 try {
                     // FORMATO > nome:voto;nome:voto;nome:voto
                     messageServer = bufferedReader.readLine();
                     notifyObservers();
+                    System.out.println(messageServer);
                 } catch (IOException e) {
-                    closeConnection(socket, bufferedWriter, bufferedReader);
+//                    closeConnection(socket, bufferedWriter, bufferedReader);
                     e.printStackTrace();
                 }
             }

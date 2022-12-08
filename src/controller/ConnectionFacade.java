@@ -28,6 +28,8 @@ public class ConnectionFacade implements Subject, Observer {
         try (Socket socket = new Socket(ip, 80)) {
             config = new Config(new Usuario(nome), ip);
             client = new Client(socket, nome);
+            client.listenForData();
+            client.addObserver(this);
             notifyObservers();
         }
     }
@@ -64,9 +66,11 @@ public class ConnectionFacade implements Subject, Observer {
 
     @Override
     public void update() {
+        System.out.println("teste ConnectionFacade");
         String message = client.getMessageServer();
         String[] userVotes = message.split(";");
         List<Vote> votos = new ArrayList<>();
+        System.out.println(userVotes);
         for (String userVote : userVotes) {
             String[] voto = userVote.split(":");
             Vote vote = new Vote();

@@ -68,6 +68,7 @@ public class TelaDeVotacao extends JFrame implements Observer {
 
     private void buildTable()
     {
+
         jt_votos = new JTable();
         jt_votos.setBackground(Color.black);
         jt_votos.setModel(new VotosModel());
@@ -82,6 +83,7 @@ public class TelaDeVotacao extends JFrame implements Observer {
 
     @Override
     public void update() {
+        System.out.println("teste");
         buildTable();
     }
 }

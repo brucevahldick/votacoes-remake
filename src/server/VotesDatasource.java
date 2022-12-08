@@ -27,13 +27,20 @@ public class VotesDatasource {
         return votacao.values().stream().filter(i -> !i).count();
     }
 
-    public HashMap<String, Boolean> getVotesData() {
-        return votacao;
+    public String getVotesData() {
+        String result = "";
+        for ( String key : votacao.keySet() ) {
+            result.concat(key).concat(":").concat(String.valueOf(votacao.get(key))).concat(";");
+        }
+        return result;
     }
 
 
     // ParamExample voteData = "Victor;favor;Lucas;favor;Bruce;contra";
     public void processVote(String voteData) {
+        if (voteData == null) {
+            return;
+        }
         String[] votes = voteData.split(";");
 
         for (int i = 0; i < votes.length; i += 2) {

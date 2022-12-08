@@ -19,7 +19,7 @@ public class ClientHandler implements Runnable {
     private BufferedWriter bufferedWriter;
     private String clientUser;
 
-    public ClientHandler(Socket socket) {
+    public ClientHandler(Socket socket, String tema) {
         try {
             this.socket = socket;
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -27,6 +27,12 @@ public class ClientHandler implements Runnable {
             this.clientUser = bufferedReader.readLine();
             clientHandlers.add(this);
             sendData("Client: " + this.clientUser + " connected");
+
+
+
+//            this.bufferedWriter.write(tema);
+//            this.bufferedWriter.newLine();
+//            this.bufferedWriter.flush();
         } catch (IOException e) {
             closeConnection(this.socket, bufferedWriter, bufferedReader);
             e.printStackTrace();
@@ -45,10 +51,15 @@ public class ClientHandler implements Runnable {
             try {
                 // data from client to save the vote
                 dataFromClients = bufferedReader.readLine();
-                VotesDatasource.getInstance().processVote(dataFromClients);
+                if (dataFromClients != null) {
+                    VotesDatasource.getInstance().processVote(dataFromClients);
 
-                // atualiza os demais clientes
-                sendData(VotesDatasource.getInstance().getVotesData().toString());
+                    System.out.println(dataFromClients);
+                    // atualiza os demais clientes
+                    sendData(VotesDatasource.getInstance().getVotesData());
+
+                }
+
             } catch (IOException e) {
                 closeConnection(socket, bufferedWriter, bufferedReader);
                 break;
